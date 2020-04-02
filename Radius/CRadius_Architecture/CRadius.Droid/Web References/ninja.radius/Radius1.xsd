@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/CRadius" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/CRadius" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:complexType name="Payload">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Error" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Rules" nillable="true" type="tns:ArrayOfRule" />
+      <xs:element minOccurs="0" name="Showstopper" type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Payload" nillable="true" type="tns:Payload" />
+  <xs:complexType name="ArrayOfRule">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="Rule" nillable="true" type="tns:Rule" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfRule" nillable="true" type="tns:ArrayOfRule" />
+  <xs:complexType name="Rule">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Direction" type="xs:int" />
+      <xs:element minOccurs="0" name="Dismissed" type="xs:boolean" />
+      <xs:element minOccurs="0" name="Distance" type="xs:decimal" />
+      <xs:element minOccurs="0" name="ID" type="xs:int" />
+      <xs:element minOccurs="0" name="LocationName" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="LocationState" type="xs:int" />
+      <xs:element minOccurs="0" name="MapLatitude" type="xs:decimal" />
+      <xs:element minOccurs="0" name="MapLongitude" type="xs:decimal" />
+      <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="RadiusK" type="xs:decimal" />
+      <xs:element minOccurs="0" name="WarnK" type="xs:decimal" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="Rule" nillable="true" type="tns:Rule" />
+</xs:schema>

@@ -1,0 +1,165 @@
+﻿html, body, Form {
+    margin: 0;
+    padding: 0;
+}
+
+html, body, form {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+body {
+    background-color: #f1f1f1;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, Tahoma;
+    filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=hIEfix.png,sizingMethod=crop);
+    zoom: 1;
+    font-size: medium;
+    color: #555555;
+}
+
+a {
+    color: white;
+}
+
+p {
+    line-height: 25pt;
+    max-width: 750px;
+}
+
+#header {
+	height: 100px;
+	width: 100%;
+	z-index: 1000;
+}
+
+#content {
+	position: relative;
+}
+
+
+.clsCard {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.clsPad {
+    padding: 10px;
+}
+
+.clsControl {
+    border: 1px solid #bcbcbc;
+    font-size: medium;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, Tahoma;
+    color: #555555;
+    height: 23px;
+}
+
+.clsMenuBar {
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #0865c6;
+    color: white;
+}
+
+.clsMenuBar2 {
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #51addd;
+    color: white;
+}
+.clsMessageBar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    font-size: large;
+    color: white;
+    text-align: center;
+    white-space: nowrap;
+    background-color: transparent;
+    border-width: 10px 10px 10px 10px;
+    border-color: transparent;
+    border-style: solid;
+}
+.clsMessageBar2 {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    font-size: large;
+    color: white;
+    text-align: center;
+    white-space: nowrap;
+    background-color: transparent;
+    border-width: 10px 10px 10px 10px;
+    border-color: transparent;
+    border-style: solid;
+}
+
+.clsLogo {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 999;
+}
+
+.clsButton {
+    font-size: medium;
+    font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, Tahoma;
+    background-color: #e5e5e5;
+    color: #555555;
+    height: 30px;
+    border: 1px solid #cccccc;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    -webkit-appearance: none;
+}
+
+    .clsButton:hover {
+        background-color: #418bb1;
+        color: white;
+    }
+
+input, textarea {
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+}
+
+    input[type="checkbox"] {
+        -webkit-appearance: none;
+        height: 1.1em;
+        width: 1.1em;
+        cursor: pointer;
+        position: relative;
+        -webkit-transition: .15s;
+        border-radius: 1.1em;
+        background-color: white;
+        border: 0.0625em solid rgb(192,192,192);
+        border-radius: 0.25em;
+        background-image: -moz-linear-gradient(rgb(240,240,240),rgb(224,224,224));
+        background-image: -ms-linear-gradient(rgb(240,240,240),rgb(224,224,224));
+        background-image: -o-linear-gradient(rgb(240,240,240),rgb(224,224,224));
+        background-image: -webkit-linear-gradient(rgb(240,240,240),rgb(224,224,224));
+        background-image: linear-gradient(rgb(240,240,240),rgb(224,224,224));
+    }
+
+        input[type="checkbox"]:checked {
+            background-color: white;
+        }
+
+            input[type="checkbox"]:before, input[type="checkbox"]:checked:before {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                line-height: 1.1em;
+                text-align: center;
+                color: #fff;
+                content: '';
+            }
+
+            input[type="checkbox"]:checked:before {
+                content: '✓';
+                color: #000;
+            }
+

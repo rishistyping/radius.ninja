@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+        android:id="@+id/menu_console"
+        android:showAsAction="never"
+        android:title="Main" />
+  <item
+        android:id="@+id/menu_settings"
+        android:showAsAction="never"
+        android:title="Settings" />
+  <item
+        android:id="@+id/menu_tag"
+        android:showAsAction="never"
+        android:title="Tag Contents" />
+</menu>

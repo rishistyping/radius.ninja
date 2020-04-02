@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Paths>
+  <Jars>
+    <Jar>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\1\jl\support-annotations.jar</Jar>
+    <Jar>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\10\jl\classes.jar</Jar>
+    <Jar>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\2\jl\bin\classes.jar</Jar>
+    <Jar>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\3\jl\bin\classes.jar</Jar>
+    <Jar>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\4\jl\bin\classes.jar</Jar>
+    <Jar>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\5\jl\bin\classes.jar</Jar>
+    <Jar>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\6\jl\bin\classes.jar</Jar>
+    <Jar>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\7\jl\classes.jar</Jar>
+    <Jar>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\8\jl\classes.jar</Jar>
+    <Jar>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\9\jl\classes.jar</Jar>
+  </Jars>
+  <ResolvedResourceDirectories>
+    <ResolvedResourceDirectory>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\2\jl\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\6\jl\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\7\jl\res</ResolvedResourceDirectory>
+    <ResolvedResourceDirectory>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\8\jl\res</ResolvedResourceDirectory>
+  </ResolvedResourceDirectories>
+  <ResolvedAssetDirectories />
+  <ResolvedEnvironmentFiles />
+  <ResolvedResourceDirectoryStamps>
+    <ResolvedResourceDirectoryStamp>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\2.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\6.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\7.stamp</ResolvedResourceDirectoryStamp>
+    <ResolvedResourceDirectoryStamp>C:\Users\steve\Documents\VS 2017\Projects\Dev\MineralBlueDemo\Radius2\obj\Release\lp\8.stamp</ResolvedResourceDirectoryStamp>
+  </ResolvedResourceDirectoryStamps>
+</Paths>

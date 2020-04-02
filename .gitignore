@@ -3,3 +3,10 @@
 ################################################################################
 
 /Radius/CRadius/bin
+/Radius/CRadius/obj
+/Radius/CRadius_Architecture/CRadius.Business/obj
+/Radius/CRadius_Architecture/CRadius.Data/bin/Debug
+/Radius/CRadius_Architecture/CRadius.Business/bin
+/Radius/CRadius_Architecture/CRadius.Data/obj/Debug
+/Radius/CRadius_Architecture/packages
+/Radius/CRadius_Architecture/.vs/CRadius/v16/Server/sqlite3/db.lock

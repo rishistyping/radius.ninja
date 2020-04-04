@@ -35,3 +35,42 @@ We're building an MVP to be ready by next week, based on the coronavirus use cas
 We'd like MVP2 to be blockchain enabled, so we can compare.
 
 There may be a hybrid solution.
+
+    p1 android radial rules
+    p2 android polygons
+    p3 pwa
+    p4 sharded blockchain [no more server]
+    p5 contacts mesh
+
+    p4 and 5 could be reversed
+
+    p2 = hackorama
+    p3 = mvp
+
+    at some point in that flow we'll introduce a ux/ui redesign
+    with the suffix 
+    so if p3 is where we do the ux/ui then 
+    p3 is followed by p3
+    then p4
+    then p5
+
+
+###p1
+
+
+
+
+
+
+
+https://carto.com/blog/carto-free-for-fight-against-coronavirus/
+
+
+https://www.esri.com/en-us/covid-19/overview
+
+https://github.com/helpfulengineering/free-for-covid
+
+
+
+
+

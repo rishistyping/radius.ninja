@@ -31,8 +31,10 @@ namespace CRadius.Droid
         {
             base.OnResume();
 
-            Thread myThread = new Thread(delegate ()
+            try
             {
+                //Thread myThread = new Thread(delegate ()
+                //{
                 string message = string.Empty; // IsInternetAvailable();
                 Utils.Rules = new List<Rule>();
 
@@ -40,62 +42,64 @@ namespace CRadius.Droid
 
                 if (message.Length > 0)
                 {
-                    RunOnUiThread(() => {
-                        Toast.MakeText(this, message, ToastLength.Long).Show();
-                        System.Environment.Exit(0);
-                    });
+                    //RunOnUiThread(() => {
+                    Toast.MakeText(this, message, ToastLength.Long).Show();
+                    System.Environment.Exit(0);
+                    //});
                 }
                 else
                 {
-                    RunOnUiThread(() => {
-                        if (message.Length > 0)
+                    //RunOnUiThread(() => {
+                    if (message.Length > 0)
+                    {
+                        Toast.MakeText(this, message, ToastLength.Long).Show();
+                        System.Environment.Exit(0);
+                    }
+                    else
+                    {
+                        Utils.Initialize();
+
+                        try
                         {
-                            Toast.MakeText(this, message, ToastLength.Long).Show();
-                            System.Environment.Exit(0);
+                            Utils.Username = string.Empty;
+                            Utils.Password = string.Empty;
+
+                            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+                            ISharedPreferencesEditor editor = prefs.Edit();
+
+                            Utils.Mobile = prefs.GetString("Mobile", string.Empty);
+                            Utils.Name = prefs.GetString("Name", string.Empty);
+
+                            Utils.StartLocation = new Location("");
+                            Utils.StartLocation.Latitude = prefs.GetFloat("StartLatitude", 100);
+                            Utils.StartLocation.Longitude = prefs.GetFloat("StartLongitude", 100);
+
+                            Utils.Location = new Location("");
+
+                            Task.Run(() =>
+                            {
+                                HandshakeAsync();
+                            });
+
+                            StartActivity(new Intent(Application.Context, typeof(MainActivity)));
                         }
-                        else
+                        catch (Exception ex)
                         {
-                            Utils.Initialize();
-
-                            try
-                            {
-                                Utils.Username = string.Empty;
-                                Utils.Password = string.Empty;
-
-                                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-                                ISharedPreferencesEditor editor = prefs.Edit();
-
-                                Utils.Radius = prefs.GetString("Radius", string.Empty);
-                                Utils.Mobile = prefs.GetString("Mobile", string.Empty);
-                                Utils.Email = prefs.GetString("Email", string.Empty);
-                                Utils.Name = prefs.GetString("Name", string.Empty);
-
-                                Utils.StartLocation = new Location("")
-                                {
-                                    Latitude = prefs.GetFloat("StartLatitude", (float)51.476852), // Greenwich
-                                    Longitude = prefs.GetFloat("StartLongitude", (float)-0.000500)
-                                };
-                                Utils.Location = new Location("");
-
-                                Task.Run(() =>
-                                {
-                                    HandshakeAsync();
-                                });
-
-                                StartActivity(new Intent(Application.Context, typeof(MainActivity)));
-                            }
-                            catch (Exception ex)
-                            {
-                                RunOnUiThread(() =>
-                                {
-                                    DoEros(ex);
-                                });
-                            }
+                            //RunOnUiThread(() =>
+                            //{
+                            DoEros(ex);
+                            //});
                         }
-                    });
+                    }
+                    //});
                 }
-            });
-            myThread.Start();
+                ////});
+                ////myThread.Start();
+            }
+            catch (Exception ex)
+            {
+                DoEros(ex);
+            }
         }
 
         void DoEros(Exception ex)
@@ -117,20 +121,20 @@ namespace CRadius.Droid
 
                 await Task.Delay(TimeSpan.FromSeconds(_wait));
 
-                RunOnUiThread(() =>
-                {
+                //RunOnUiThread(() =>
+                //{
                     if (!_serverHasResponded)
                     {
                         Toast.MakeText(this, "Working...", ToastLength.Long).Show();
                     }
-                });
+                //});
             }
             catch (Exception ex)
             {
-                RunOnUiThread(() =>
-                {
+                //RunOnUiThread(() =>
+                //{
                     DoEros(ex);
-                });
+                //});
             }
         }
 
@@ -140,30 +144,40 @@ namespace CRadius.Droid
             {
                 _serverHasResponded = true;
 
-                Payload payload = e.Result;
+                try
+                {
+                    Payload payload = e.Result;
 
-                if (payload.Error)
+                    if (payload.Error)
+                    {
+                        RunOnUiThread(() =>
+                        {
+                            Toast.MakeText(this, payload.Message, ToastLength.Long).Show();
+                        });
+                    }
+                    else
+                    {
+                        Utils.Rules = new System.Collections.Generic.List<Rule>();
+                        foreach (Rule rule in payload.Rules)
+                        {
+                            rule.Dismissed = false;
+                            Utils.Rules.Add(rule);
+                        }
+                    }
+                }
+                catch
                 {
                     RunOnUiThread(() =>
                     {
-                        Toast.MakeText(this, payload.Message, ToastLength.Long).Show();
+                        Toast.MakeText(this, "The Coronalert service is offline or you don't have a connection. Please try again later.", ToastLength.Long).Show();
                     });
-                }
-                else
-                {
-                    Utils.Rules = new System.Collections.Generic.List<Rule>();
-                    foreach (Rule rule in payload.Rules)
-                    {
-                        Utils.Rules.Add(rule);
-                    }
                 }
             }
             catch (Exception ex)
             {
                 RunOnUiThread(() =>
                 {
-                    Utils.Eros = ex;
-                    StartActivity(new Intent(Application.Context, typeof(ErosActivity)));
+                    DoEros(ex);
                 });
             }
         }

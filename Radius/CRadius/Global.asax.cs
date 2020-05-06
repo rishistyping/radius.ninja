@@ -12,14 +12,24 @@ namespace CRadius
 
             Application["Path"] = path;
 
-            if (path.Contains(@"radius.ninja"))
-            {
-                Application["ConnectionStringName"] = "LiveConnectionString";
-            }
-            else
+            //if (path.Contains(@"radius.ninja"))
+            //{
+            //    Application["ConnectionStringName"] = "LiveConnectionString";
+            //}
+            //else
+            //{
+            //    Application["ConnectionStringName"] = "LocalConnectionString";
+            //}
+
+            if (path.Contains("repos")) // Local fact of SA's dev machine. Other developers change
             {
                 Application["ConnectionStringName"] = "LocalConnectionString";
             }
+            else
+            {
+                Application["ConnectionStringName"] = "LiveConnectionString";
+            }
+
         }
     }
 }

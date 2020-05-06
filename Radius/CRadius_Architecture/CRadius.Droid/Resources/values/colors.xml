@@ -5,7 +5,7 @@
   <color name="primaryDark">#666</color>
   <color name="accent">#83CE3A</color>
   <color name="window_background">#FFFFFF</color>
-  <color name="splash_background">#2196f3</color>
+  <color name="splash_background">#ffffff</color>
   <color name="my_blue">#0865c6</color>
   <color name="my_grey">#cccccc</color>
   <color name="my_text">#FFFFFF</color>

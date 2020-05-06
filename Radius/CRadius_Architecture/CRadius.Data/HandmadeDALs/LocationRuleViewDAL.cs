@@ -69,6 +69,8 @@ namespace CRadius.Data.DAL
             locationRule.Direction = SqlClientUtility.GetInt32(dataReader, "Direction", 0);
             locationRule.Message = SqlClientUtility.GetString(dataReader, "Message", String.Empty);
             locationRule.LocationName = SqlClientUtility.GetString(dataReader, "LocationName", String.Empty);
+            locationRule.LocationType = SqlClientUtility.GetInt32(dataReader, "LocationType", 0);
+            locationRule.Polygon = SqlClientUtility.GetString(dataReader, "Polygon", String.Empty);
 
             return locationRule;
         }

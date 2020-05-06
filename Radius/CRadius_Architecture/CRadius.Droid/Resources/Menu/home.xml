@@ -9,7 +9,7 @@
         android:showAsAction="never"
         android:title="Settings" />
   <item
-        android:id="@+id/menu_tag"
-        android:showAsAction="never"
-        android:title="Tag Contents" />
+      android:id="@+id/menu_snap"
+      android:showAsAction="never"
+      android:title="Snap to Here" />
 </menu>

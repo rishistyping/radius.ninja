@@ -4,5 +4,6 @@
     <SelectedDevice>Sony E6533</SelectedDevice>
     <AndroidDesignerPreferredDevice>Nexus 4</AndroidDesignerPreferredDevice>
     <AndroidDesignerPreferredTheme>MyTheme</AndroidDesignerPreferredTheme>
+    <ProjectView>ShowAllFiles</ProjectView>
   </PropertyGroup>
 </Project>

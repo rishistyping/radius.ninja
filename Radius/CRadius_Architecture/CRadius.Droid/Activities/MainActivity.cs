@@ -1,24 +1,26 @@
-﻿using Android.App;
+﻿using Android;
+using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.Gms.Location;
+using Android.Graphics;
 using Android.Locations;
 using Android.Media;
-using Android.Nfc;
 using Android.OS;
-using Android.Widget;
-using System;
-using System.Threading.Tasks;
-using System.Timers;
 using Android.Preferences;
-using Android.Views;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
-using System.Globalization;
+using Android.Support.Design.Widget;
+using Android.Support.V4.Content;
 using Android.Telephony;
-using Android.Graphics;
+using Android.Views;
+using Android.Widget;
 using CRadius.Droid.ninja.radius;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Environment = System.Environment;
 
 namespace CRadius.Droid
 {
@@ -29,288 +31,349 @@ namespace CRadius.Droid
 
     public class MainActivity : Activity
     {
-        MediaPlayer _barp;
+        static Timer _barpTime = null;
+
+        static MediaPlayer _barp;
         MediaPlayer _beep;
 
         string _txtTag;
         string _txtLocation;
-        string _txtAddress;
         string _txtStartLocation;
         string _txtStartAddress;
 
         TextView _txtRemarks;
         TextView _txtDistance;
+        TextView _txtLog;
 
         ImageView _imageViewInOut;
 
-        Button _buttonSnaptoHere;
-        Button _buttonStart;
+        Button _buttonMute;
 
         Toolbar _toolbar;
 
         public static MainActivity _instance;
 
-        private NfcAdapter _nfcAdapter;
+        static void TickTimer(object state)
+        {
+            Thread.Sleep(1000);
+            _barp.Start();
+        }
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
 
-            _instance = this;
-
-            SetContentView(Resource.Layout.Main);
-
-            _nfcAdapter = NfcAdapter.GetDefaultAdapter(this);
-
-            _toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
-            _toolbar.Title = string.Empty;
-            SetActionBar(_toolbar);
-
-            _txtDistance = FindViewById<TextView>(Resource.Id.txtDistance);
-            _txtRemarks = FindViewById<TextView>(Resource.Id.txtRemarks);
-            _imageViewInOut = FindViewById<ImageView>(Resource.Id.imageViewInOut);
-
-            var font = Typeface.CreateFromAsset(Assets, "MontserratBold.ttf");
-            _txtDistance.Typeface = font;
-
-            _barp = MediaPlayer.Create(this, Resource.Raw.barp);
-            _beep = MediaPlayer.Create(this, Resource.Raw.beep);
-
-            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-
-            _txtTag = prefs.GetString("TagId", string.Empty);
-
-            _txtStartLocation = String.Format("{0:0.####},{1:0.####}", Utils.StartLocation.Latitude, Utils.StartLocation.Longitude);
-            _txtStartAddress = GetAddress(Utils.StartLocation.Latitude, Utils.StartLocation.Longitude);
-            _txtRemarks.Text = string.Empty;
-
-            _buttonSnaptoHere = FindViewById<Button>(Resource.Id.buttonSnaptoHere);
-            _buttonSnaptoHere.Click += delegate
+            try
             {
-                DoSnap(prefs);
-            };
+                _instance = this;
 
-            Utils.Started = true; // false;
-            Utils.SMSSent = false;
-            Utils.EmailSent = false;
+                SetContentView(Resource.Layout.Main);
 
-            _buttonStart = FindViewById<Button>(Resource.Id.buttonStart);
-            _buttonStart.Click += delegate
-            {
-                Utils.Started = !Utils.Started;
+                _toolbar = FindViewById<Toolbar>(Resource.Id.toolbar);
+                _toolbar.Title = string.Empty;
+                SetActionBar(_toolbar);
 
-                // We only reset the SMS flag on deliberate restarts
-                if (!Utils.Started)
+                _txtDistance = FindViewById<TextView>(Resource.Id.txtDistance);
+                _txtRemarks = FindViewById<TextView>(Resource.Id.txtRemarks);
+                _imageViewInOut = FindViewById<ImageView>(Resource.Id.imageViewInOut);
+
+                var font = Typeface.CreateFromAsset(Assets, "MontserratBold.ttf");
+                _txtDistance.Typeface = font;
+
+                _barp = MediaPlayer.Create(this, Resource.Raw.barp);
+                _beep = MediaPlayer.Create(this, Resource.Raw.beep);
+
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+
+                _txtTag = prefs.GetString("TagId", string.Empty);
+
+                _txtStartLocation = String.Format("{0:0.####},{1:0.####}", Utils.StartLocation.Latitude, Utils.StartLocation.Longitude);
+                _txtStartAddress = Utils.GetAddress(_instance);
+                _txtRemarks.Text = string.Empty;
+
+                _buttonMute = FindViewById<Button>(Resource.Id.buttonMute);
+                _buttonMute.Click += delegate
                 {
-                    Utils.SMSSent = false;
-                    Utils.EmailSent = false;
-                }
+                    if (_barpTime != null)
+                    {
+                        _barpTime.Change(Timeout.Infinite, Timeout.Infinite);
+                    }
+                    _buttonMute.Visibility = ViewStates.Gone;
+                };
+
+                Utils.SMSSent = false;
 
                 DoStart();
-            };
 
-            DoStart();
+                _buttonMute.Visibility = ViewStates.Invisible;
 
-            _buttonStart.Visibility = ViewStates.Invisible;
-            _buttonSnaptoHere.Visibility = ViewStates.Invisible;
+                _txtDistance.Text = " ";
 
-            _txtDistance.Text = "SCANNING";
-
-            Task.Run(() =>
+                Task.Run(() =>
+                {
+                    _ = TryGetLocationAsync();
+                });
+            }
+            catch (Exception ex)
             {
-                StartLocationUpdates();
-            });
+                DoEros(ex);
+            }
+        }
+
+        readonly string[] Permissions =
+        {
+            Manifest.Permission.AccessCoarseLocation,
+            Manifest.Permission.AccessFineLocation,
+            Manifest.Permission.SendSms
+        };
+
+        const int RequestLocationId = 0;
+
+        async Task TryGetLocationAsync()
+        {
+            if ((int)Build.VERSION.SdkInt < 23)
+            {
+                await Task.Run(() =>
+                {
+                    StartLocationUpdates();
+                });
+                return;
+            }
+
+            await GetPermissionAsync();
+        }
+
+        async Task GetPermissionAsync()
+        {
+            if (CheckSelfPermission(Manifest.Permission.AccessFineLocation) == (int)Android.Content.PM.Permission.Granted &&
+                CheckSelfPermission(Manifest.Permission.AccessCoarseLocation) == (int)Android.Content.PM.Permission.Granted &&
+                CheckSelfPermission(Manifest.Permission.SendSms) == (int)Android.Content.PM.Permission.Granted)
+            {
+                await Task.Run(() =>
+                {
+                    StartLocationUpdates();
+                });
+                return;
+            }
+
+            //need to request permission
+            if (ShouldShowRequestPermissionRationale(Manifest.Permission.AccessFineLocation) ||
+                ShouldShowRequestPermissionRationale(Manifest.Permission.AccessCoarseLocation) ||
+                ShouldShowRequestPermissionRationale(Manifest.Permission.SendSms))
+            {
+                var layout = (LinearLayout)FindViewById(Resource.Id.action_bar_root);
+
+                Snackbar.Make(layout, "Location access is required to show location alerts.", Snackbar.LengthIndefinite)
+                        .SetAction("OK", v => RequestPermissions(Permissions, RequestLocationId))
+                        .Show();
+                return;
+            }
+
+            //Finally request permissions with the list of permissions and Id
+            RequestPermissions(Permissions, RequestLocationId);
+
+        }
+
+        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+        {
+            if (requestCode == RequestLocationId)
+            {
+                if (grantResults[0] == Permission.Granted &&
+                    grantResults[1] == Permission.Granted &&
+                    grantResults[2] == Permission.Granted)
+                {
+                    StartLocationUpdates();
+                }
+            }
+            else
+            {
+                base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+            }
+        }
+
+        void DoEros(Exception ex)
+        {
+            Utils.Eros = ex;
+            StartActivity(new Intent(Application.Context, typeof(ErosActivity)));
         }
 
         void DoStart()
         {
-
-            if (Utils.Started)
-            {
-                _buttonStart.Text = "Sleep";
-                ShowState();
-            }
-            else
-            {
-                _buttonStart.Text = "Wake";
-                _txtRemarks.Text = string.Empty;
-                Alert((int)Utils.WarningState.Safe, null, string.Empty, false);
-            }
+            _txtRemarks.Text = string.Empty;
+            _buttonMute.Visibility = ViewStates.Gone;
+            Alert((int)Utils.WarningState.Safe, null, string.Empty, false);
         }
 
         protected override void OnResume()
         {
             base.OnResume();
-
-            if (_nfcAdapter == null)
-            {
-                Toast.MakeText(this, "NFC is not supported on this device. You may continue, without NFC.", ToastLength.Long).Show();
-            }
-            else
-            {
-                var filters = new[]
-                {
-                    new IntentFilter(NfcAdapter.ActionTagDiscovered)
-                };
-                var intent = new Intent(this, this.GetType()).AddFlags(ActivityFlags.SingleTop);
-                var pendingIntent = PendingIntent.GetActivity(this, 0, intent, 0);
-
-                _nfcAdapter.EnableForegroundDispatch(this, pendingIntent, filters, null);
-            }
-        }
-
-        void ShowState2()
-        {
-
         }
 
         private void ShowState()
         {
-            _buttonStart.Visibility = ViewStates.Visible;
-            _buttonSnaptoHere.Visibility = ViewStates.Visible;
-
             _toolbar.SetBackgroundColor(Color.ParseColor("#2196f3"));
-            _txtDistance.SetTextColor(Color.ParseColor("#666666"));
+            _txtDistance.SetTextColor(Color.ParseColor("#333333"));
 
-            double radius = Utils.DblParse(Utils.Radius);
+            //double radius = Utils.DblParse(Utils.Radius);
 
-            if (Utils.Started)
+            bool alarm = false;
+
+            // This code implements rules
+            foreach (Rule rule in Utils.Rules)
             {
-                bool alarm = false;
+                int oldLocationState = rule == null ? (int)Utils.LocationState.Out : rule.LocationState;
 
-                // This code implements rules
-                foreach (Rule rule in Utils.Rules)
+                // In this version we just do the first undismissed alarm in series
+                if (rule.Dismissed)
                 {
-                    int oldLocationState = rule == null ? (int)Utils.LocationState.Out : rule.LocationState;
+                    //Alert((int)Utils.WarningState.Safe, rule);
+                }
+                else
+                { 
+                    string a = "{action}";
 
-                    // In this version we just do the first alarm in series
-                    if (rule.Distance > 0 && !rule.Dismissed)
+                    if (rule.LocationType == (int)Utils.LocationType.Radius)
                     {
-                        //if (rule.Direction == (int)Utils.Direction.Cross) // Directions not implemented yet but plumbing is there
-                        //{
-                            string a = "{action}";
+                        ////Log("Consuming rule " + rule.LocationName);
 
-                            // Possible state changes:
-                            // Out to Inbound
-                            // In to Outbound
-                            // In
-                            // Safe
-                            if (oldLocationState == (int)Utils.LocationState.Out &&
-                                rule.Distance > rule.RadiusK &&
-                                rule.Distance < rule.RadiusK + rule.WarnK) // Inbound
+                        rule.LocationState = rule.Distance > rule.RadiusK ? (int)Utils.LocationState.Out : (int)Utils.LocationState.In;
+
+                        // Possible state changes:
+                        // Out to Inbound
+                        // In to Outbound
+                        // In
+                        // Safe
+                        if (oldLocationState == (int)Utils.LocationState.Out &&
+                            rule.Distance > rule.RadiusK &&
+                            rule.Distance < rule.RadiusK + rule.WarnK) // Inbound
+                        {
+                            string b = "are within " + rule.WarnK.ToString("0.###") + " km of entering " + rule.LocationName;
+                            string message = rule.Message.Replace(a, b);
+                            message += Environment.NewLine +
+                                Environment.NewLine +
+                                "Coronalert will continue to monitor your position, and tell you when you enter.";
+                            alarm = true;
+                            Alert((int)Utils.WarningState.Warning, rule, message);
+                        }
+                        else if (oldLocationState == (int)Utils.LocationState.Out &&
+                            rule.Distance < rule.RadiusK) // Entered
+                        {
+                            string b = " have entered " + rule.LocationName;
+                            string c = rule.Message.Replace(a, b);
+
+                            decimal edgeDistance = rule.RadiusK - rule.Distance;
+                            if (edgeDistance > 0)
                             {
-                                string b = "are within " + rule.WarnK + " of entering " + rule.LocationName;
-                                rule.Message = rule.Message.Replace(a, b);
-                                alarm = true;
-                                Alert((int)Utils.WarningState.Warning, rule, rule.Message);
+                                c +=
+                                    Environment.NewLine +
+                                    Environment.NewLine +
+                                    "You are " + edgeDistance.ToString("0.###") + " km from the edge.";
                             }
-                            else if (oldLocationState == (int)Utils.LocationState.In &&
-                                rule.Distance < rule.RadiusK &&
-                                rule.Distance > rule.RadiusK - rule.WarnK) // Outbound
+
+                            alarm = true;
+                            Alert((int)Utils.WarningState.Alert, rule, c);
+                        }
+                        else if (oldLocationState == (int)Utils.LocationState.In &&
+                            rule.Distance < rule.RadiusK &&
+                            rule.Distance > rule.RadiusK - rule.WarnK) // Outbound
+                        {
+                            string b = "are within " + rule.WarnK.ToString("0.###") + " km of exiting " + rule.LocationName +
+                                    ". Coronalert will continue to monitor your position, and tell you when you leave.";
+                            string c = rule.Message.Replace(a, b);
+                            alarm = true;
+                            Alert((int)Utils.WarningState.Warning, rule, c);
+                        }
+                        else if (oldLocationState == (int)Utils.LocationState.In &&
+                            rule.Distance > rule.RadiusK) // Left
+                        {
+                            string b = " have left " + rule.LocationName +
+                                    ". Coronalert will continue to monitor your position, and tell you if you re-enter.";
+                            string c = rule.Message.Replace(a, b);
+                            alarm = true;
+                            Alert((int)Utils.WarningState.Alert, rule, c);
+                        }
+                        else if (rule.Distance < rule.RadiusK) // In
+                        {
+                            string b = "are inside " + rule.LocationName;
+                            string c = rule.Message.Replace(a, b);
+
+                            decimal edgeDistance = rule.RadiusK - rule.Distance;
+                            if (edgeDistance > 0)
                             {
-                                string b = "are within " + rule.WarnK + " of exiting " + rule.LocationName;
-                                rule.Message = rule.Message.Replace(a, b);
-                                alarm = true;
-                                Alert((int)Utils.WarningState.Warning, rule, rule.Message);
+                                c +=
+                                    Environment.NewLine +
+                                    Environment.NewLine +
+                                    "You are " + edgeDistance.ToString("0.###") + " km from the edge.";
                             }
-                            else if (rule.Distance < rule.RadiusK) // In
-                            {
-                                string b = "are inside " + rule.LocationName;
-                                rule.Message = rule.Message.Replace(a, b);
-                                alarm = true;
-                                Alert((int)Utils.WarningState.Alert, rule, rule.Message);
-                            }
-                            else
-                            {
-                                Alert((int)Utils.WarningState.Safe, rule);
-                            }
-                        //}
-                        //else
-                        //{
-                        //    Alert((int)Utils.WarningState.Safe, rule);
-                        //}
+
+                            alarm = true;
+                            Alert((int)Utils.WarningState.Warning, rule, c);
+                        }
+                        else if (rule.LocationState == (int)Utils.LocationState.Out)
+                        {
+                            alarm = true;
+                            Alert((int)Utils.WarningState.Safe, rule);
+                        }
+                    }
+                    else if (rule.LocationType == (int)Utils.LocationType.Polygon)
+                    {
+                        rule.LocationState = rule.Distance > 0 ? (int)Utils.LocationState.Out : (int)Utils.LocationState.In;
+
+                        if (oldLocationState == (int)Utils.LocationState.Out &&
+                            rule.Distance < 0)
+                        {
+                            string b = "have entered " + rule.LocationName;
+                            string c = rule.Message.Replace(a, b);
+                            //Log(b);
+                            alarm = true;
+                            Alert((int)Utils.WarningState.Alert, rule, c);
+                        }
+                        else if (oldLocationState == (int)Utils.LocationState.In &&
+                            rule.Distance > 0)
+                        {
+                            string b = "have left " + rule.LocationName;
+                            string c = rule.Message.Replace(a, b);
+                            //Log(b);
+                            alarm = true;
+                            Alert((int)Utils.WarningState.Alert, rule, c);
+                        }
+                        else if (rule.Distance < 0)
+                        {
+                            string b = "are inside " + rule.LocationName;
+                            string c = rule.Message.Replace(a, b);
+                            //Log(b);
+                            alarm = true;
+                            Alert((int)Utils.WarningState.Warning, rule, c);
+                        }
+                        else
+                        {
+                            ////Log("Safe");
+                            Alert((int)Utils.WarningState.Safe, rule);
+                        }
                     }
                     else
                     {
+                        alarm = true;
                         Alert((int)Utils.WarningState.Safe, rule);
                     }
                 }
 
-                // This code implements the origin - if there's no other alarm
-                if (!alarm && Utils.Distance > radius && radius > 0)
+                if (alarm)
                 {
-                    Alert((int)Utils.WarningState.Warning, null);
-
-                    // Send an SMS and / or email, once per session
-                    if ((Utils.Mobile.Length > 0 && !Utils.SMSSent) || (Utils.Email.Length > 0 && !Utils.EmailSent))
-                    {
-                        PendingIntent sentPI;
-                        String SENT = "SMS_SENT";
-
-                        sentPI = PendingIntent.GetBroadcast(this, 0, new Intent(SENT), 0);
-
-                        int count = BitConverter.GetBytes(decimal.GetBits((decimal)radius)[3])[2];
-                        string distance = string.Format(new NumberFormatInfo() { NumberDecimalDigits = count }, "{0:F}", (decimal)Utils.Distance);
-
-                        string message = Utils.Name +
-                            " is " +
-                            distance +
-                            " km from " +
-                            _txtStartLocation + " " +
-                            _txtStartAddress;
-
-                        if (Utils.Mobile.Length > 0 && !Utils.SMSSent)
-                        {
-                            SmsManager.Default.SendTextMessage(
-                                Utils.Mobile.Replace(" ", string.Empty),
-                                null,
-                                "Radius alert. " + message,
-                                sentPI,
-                                null);
-
-                            Utils.SMSSent = true;
-                        }
-                    }
+                    break;
                 }
             }
-            else
+
+            // This code implements the origin - if there's no other alarm
+            //if (!alarm && Utils.Distance > radius && radius > 0)
+            //{
+            //    Alert((int)Utils.WarningState.Warning, null);
+            //}
+
+            if (!alarm)
             {
-                Alert((int)Utils.WarningState.Safe, null);
+                StopBarp();
             }
-        }
-
-        protected override void OnNewIntent(Intent intent)
-        {
-            base.OnNewIntent(intent);
-
-            RunOnUiThread(() =>
-            {
-                Utils.TagId = TagParser.GetTagId(intent);
-
-                Toast.MakeText(this, "Tag " +
-                    Utils.TagId +
-                    (_txtTag.Length > 0 ? System.Environment.NewLine + _txtTag : string.Empty), ToastLength.Short).Show();
-
-                if (_txtTag == Utils.TagId)
-                {
-                    Utils.Started = !Utils.Started;
-                }
-                else
-                {
-                    Utils.Started = true;
-
-                    DoSnap(PreferenceManager.GetDefaultSharedPreferences(this));
-
-                    ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-                    ISharedPreferencesEditor editor = prefs.Edit();
-                    editor.PutString("TagId", Utils.TagId);
-                    editor.Apply();
-                }
-
-                _txtTag = Utils.TagId;
-
-                DoStart();
-            });
         }
 
         void Alert(int warningState, Rule rule, string message = "", bool showDistance = true)
@@ -324,103 +387,124 @@ namespace CRadius.Droid
 
             if (warningState == (int)Utils.WarningState.Safe)
             {
-                if (!Utils.Started)
-                {
-                    _txtDistance.Text = "SLEEPING"; // string.Empty;
-                    _txtDistance.SetTextColor(Color.ParseColor("#b2b2b2"));
-                }
-                else if (showDistance || Utils.Distance > 0)
-                {
-                    _txtDistance.Text = Utils.Distance.ToString("0.###");
-                    _txtDistance.SetTextColor(Color.ParseColor("#666666"));
-                }
-
-                //if (Utils.Started)
-                //{
-                //    _imageViewInOut.SetImageResource(Resource.Drawable.Green);
-                //    _toolbar.SetBackgroundColor(Color.ParseColor("#00bf02"));
-                //}
-                //else
-                //{
+                _txtDistance.Text = Utils.Distance.ToString("#.###");
+                _txtDistance.SetTextColor(Color.ParseColor("#333333"));
                 _imageViewInOut.SetImageResource(Resource.Drawable.Gray);
-                    _toolbar.SetBackgroundColor(Color.ParseColor("#2196f3"));
-                //}
-
+                _toolbar.SetBackgroundColor(Color.ParseColor("#2196f3"));
+                Utils.BarpLooped = false;
+                Utils.SMSSent = false;
+                StopBarp();
             }
             else if (warningState == (int)Utils.WarningState.Warning)
             {
                 _imageViewInOut.SetImageResource(Resource.Drawable.Orange);
-                _toolbar.SetBackgroundColor(Color.ParseColor("#f2c50e"));
-                _txtDistance.SetTextColor(Color.ParseColor("#f2c50e"));
-                _txtDistance.Text = "CAUTION";
-                //_barp.Start();
+                _toolbar.SetBackgroundColor(Color.ParseColor("#ff9a15"));
+                _txtDistance.SetTextColor(Color.ParseColor("#ff9a15"));
+                _txtDistance.Text = "WARNING";
+                Utils.SMSSent = false;
+
+                if (!Utils.BarpPlayed)
+                {
+                    Utils.BarpPlayed = true;
+                    _barp.Start();
+                }
+
+                StopBarp();
             }
             else if (warningState == (int)Utils.WarningState.Alert)
             {
                 _imageViewInOut.SetImageResource(Resource.Drawable.Red);
-                _toolbar.SetBackgroundColor(Color.ParseColor("#bf0000"));
-                _txtDistance.SetTextColor(Color.ParseColor("#bf0000"));
+                _toolbar.SetBackgroundColor(Color.ParseColor("#ff0909"));
+                _txtDistance.SetTextColor(Color.ParseColor("#ff0909"));
                 _txtDistance.Text = "ALERT";
-            }
-        }
-
-        void DoSnap(ISharedPreferences prefs)
-        {
-            Utils.StartLocation = Utils.Location;
-            Utils.Distance = 0;
-
-            _txtStartLocation = String.Format("{0:0.####},{1:0.####}", Utils.StartLocation.Latitude, Utils.StartLocation.Longitude);
-            _txtStartAddress = GetAddress(Utils.StartLocation.Latitude, Utils.StartLocation.Longitude);
-            _txtLocation = _txtStartLocation;
-            _txtAddress = _txtStartAddress;
-            _txtRemarks.Text = "You are at your origin.";
-
-            Alert((int)Utils.WarningState.Safe, null);
-
-            // Persist the new origin
-            ISharedPreferencesEditor editor = prefs.Edit();
-            editor.PutFloat("StartLatitude", (float)Utils.StartLocation.Latitude);
-            editor.PutFloat("StartLongitude", (float)Utils.StartLocation.Longitude);
-            editor.PutString("TagId", string.Empty);
-            editor.Apply();
-
-            _txtTag = string.Empty;
-        }
-
-        public string GetAddress(double latitude, double longitude)
-        {
-            string address = string.Empty;
-
-            try
-            {
-                Geocoder geocoder = new Geocoder(this);
-
-                IList<Address> addressList = geocoder.GetFromLocation(latitude, longitude, 1);
-
-                Address addressCurrent = addressList.FirstOrDefault();
-
-                if (addressCurrent != null)
+                if (!Utils.BarpLooped)
                 {
-                    StringBuilder deviceAddress = new StringBuilder();
+                    Utils.BarpLooped = true;
 
-                    for (int i = 0; i <= addressCurrent.MaxAddressLineIndex; i++)
-                    {
-                        if (addressCurrent.GetAddressLine(i).Length > 0)
-                        {
-                            deviceAddress.Append(addressCurrent.GetAddressLine(i)).AppendLine(",");
-                        }
-                    }
+                    _barpTime = new Timer(
+                        new TimerCallback(TickTimer),
+                        null,
+                        1000,
+                        1000);
 
-                    address = deviceAddress.ToString().Replace(System.Environment.NewLine, string.Empty).TrimEnd(',');
+                    _buttonMute.Visibility = ViewStates.Visible;
+                }
+                Utils.BarpPlayed = false;
+
+                // Send an SMS
+                if (Utils.Mobile.Length > 0 && !Utils.SMSSent)
+                {
+                    //double radius = Utils.DblParse(Utils.Radius);
+
+                    //if (Utils.Distance > radius && radius > 0) // Radius alert
+                    //{
+                    //    PendingIntent sentPI;
+                    //    String SENT = "SMS_SENT";
+                    //    sentPI = PendingIntent.GetBroadcast(this, 0, new Intent(SENT), 0);
+
+                    //    string smsContent = "Coronalert alert. " + Utils.Name +
+                    //        " is " +
+                    //        Utils.Distance.ToString("0.###") +
+                    //        " km from " +
+                    //        _txtStartLocation + " " +
+                    //        _txtStartAddress;
+
+                    //    SmsManager.Default.SendTextMessage(
+                    //        Utils.Mobile.Replace(" ", string.Empty),
+                    //        null,
+                    //        smsContent,
+                    //        sentPI,
+                    //        null);
+
+                    //    Utils.SMSSent = true;
+                    //}
                 }
             }
-            catch
-            {
-                address = "Can't get address. Are you online?";
-            }
-
-            return address;
         }
+
+        void StopBarp()
+        {
+            if (_barpTime != null)
+            {
+                _barpTime.Change(Timeout.Infinite, Timeout.Infinite);
+            }
+            _buttonMute.Visibility = ViewStates.Gone;
+        }
+
+        //public string GetAddress(double latitude, double longitude)
+        //{
+        //    string address = string.Empty;
+
+        //    try
+        //    {
+        //        Geocoder geocoder = new Geocoder(this);
+
+        //        IList<Address> addressList = geocoder.GetFromLocation(latitude, longitude, 1);
+
+        //        Address addressCurrent = addressList.FirstOrDefault();
+
+        //        if (addressCurrent != null)
+        //        {
+        //            StringBuilder deviceAddress = new StringBuilder();
+
+        //            for (int i = 0; i <= addressCurrent.MaxAddressLineIndex; i++)
+        //            {
+        //                if (addressCurrent.GetAddressLine(i).Length > 0)
+        //                {
+        //                    deviceAddress.Append(addressCurrent.GetAddressLine(i)).AppendLine(",");
+        //                }
+        //            }
+
+        //            address = deviceAddress.ToString().Replace(System.Environment.NewLine, string.Empty).TrimEnd(',');
+        //        }
+        //    }
+        //    catch
+        //    {
+        //        address = "Can't get address. Are you online?";
+        //    }
+
+        //    return address;
+        //}
 
         void OnLocationResult(object sender, Location location)
         {
@@ -436,16 +520,21 @@ namespace CRadius.Droid
                     }
                     else
                     {
-                        _txtLocation = String.Format("{0:0.####},{1:0.####}", Utils.Location.Latitude, Utils.Location.Longitude);
+                        // First time in, set some defaults $$$
+                        if (Utils.StartLocation.Latitude == 0 && Utils.StartLocation.Longitude == 0)
+                        {
+                            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+                            Utils.StartLocation = Utils.Location;
 
-                        //The Geocoder class retrieves a list of addresses from Google over the internet  
-                        //if (Utils.PreviousLocation == null ||
-                        //    Utils.Location.Latitude != Utils.PreviousLocation.Latitude ||
-                        //    Utils.Location.Longitude != Utils.PreviousLocation.Longitude)
-                        //{
-                        //    _txtAddress = GetAddress(Utils.Location.Latitude, Utils.Location.Longitude);
-                        //}
+                            ISharedPreferencesEditor editor = prefs.Edit();
 
+                            editor.PutFloat("StartLatitude", (float)Utils.StartLocation.Latitude);
+                            editor.PutFloat("StartLongitude", (float)Utils.StartLocation.Longitude);
+                            editor.Apply();
+
+                            _txtStartAddress = Utils.GetAddress(_instance);
+                        }
+                        
                         _txtLocation = String.Format("{0:0.####},{1:0.####}", Utils.StartLocation.Latitude, Utils.StartLocation.Longitude);
 
                         // This code measures distance from the origin
@@ -454,29 +543,91 @@ namespace CRadius.Droid
 
                         Utils.HaversineDistance(coord1, coord2, Utils.DistanceUnit.Kilometers);
 
-                        string distance = ((decimal)Utils.Distance).ToString("0.#####");
+                        //Utils.Distance = 10; // Hack
 
-                        _txtDistance.Text = Utils.Distance.ToString("0.###");
+                        _txtDistance.Text = Utils.Distance.ToString("#.###");
 
                         if (Utils.Distance == 0)
                         {
-                            _txtRemarks.Text = string.Format("You are at your origin.");
+                            _txtRemarks.Text = string.Format("You are at your origin, ");
                         }
-                        else if (Utils.Started)
+                        else
                         {
-                            _txtRemarks.Text = string.Format("You are {0} km from your origin.",
-                            ((decimal)Utils.Distance).ToString("0.#####"));
+                            _txtRemarks.Text = "You are " + Utils.Distance.ToString("0.###") + " km from your origin, ";
                         }
+
+                        _txtRemarks.Text += _txtStartAddress;
 
                         Utils.PreviousLocation = location;
 
                         // This code measures distance wrt rules
                         foreach (Rule rule in Utils.Rules)
                         {
-                            coord1 = new LatLng(Utils.StartLocation.Latitude, Utils.StartLocation.Longitude);
-                            coord2 = new LatLng(Utils.Location.Latitude, Utils.Location.Longitude);
+                            if (rule.LocationType == (int)Utils.LocationType.Radius)
+                            {
+                                coord1 = new LatLng((double)rule.MapLatitude, (double)rule.MapLongitude);
+                                rule.Distance = Utils.HaversineDistance(coord1, coord2);
+                            }
+                            else if (rule.LocationType == (int)Utils.LocationType.Polygon && rule.Polygon.Length > 0)
+                            {
+                                string payload = new string(rule.Polygon.Where(c => !char.IsControl(c)).ToArray());
+                                int startIndex = payload.IndexOf("<coordinates>");
+                                int endIndex = payload.IndexOf("</coordinates>");
+                                payload = payload.Substring(startIndex + 13, endIndex - startIndex - 13)
+                                    .Replace(",0", ",")
+                                    .Replace(" ", "")
+                                    .Trim(',');
 
-                            rule.Distance = Utils.HaversineDistance(coord1, coord2);
+                                double[] doubles = Array.ConvertAll(payload.Split(','), double.Parse);
+
+                                List<GeographicalPoint> points = new List<GeographicalPoint>();
+
+                                for (int i = 0; i <= doubles.Length - 1; i += 2)
+                                {
+                                    points.Add(new GeographicalPoint(doubles[i + 1], doubles[i]));
+                                }
+
+                                Polygon polygon = new Polygon(points);
+                                GeographicalPoint point = new GeographicalPoint(coord2.Latitude, coord2.Longitude);
+
+                                // Negative int.MaxValue distance in a polygon rule means we're inside the shape $$$ we need code for nested polygons
+                                // Otherwise we point it at space
+                                // That means [for now] polygons get processed before radius rules
+                                // We'll move to a system where all the trigered rules are processed
+                                rule.Distance = polygon.Contains(point) ? int.MaxValue * -1 : int.MaxValue;
+                            }
+                            else
+                            {
+                                rule.Distance = int.MaxValue;
+                            }
+                        }
+
+                        // Reduce the rules to undismissed ones
+                        Utils.Rules = Utils.Rules.Where(x => !x.Dismissed).ToList();
+
+                        if (Utils.Rules.Count > 0)
+                        {
+                            Utils.Rules = Utils.Rules.OrderBy(x => x.Distance - x.RadiusK).ToList();
+
+                            if (Utils.Rules[0].LocationType == (int)Utils.LocationType.Radius)
+                            {
+                                decimal realDistance = Utils.Rules[0].Distance - Utils.Rules[0].RadiusK;
+                                if (realDistance > 0)
+                                {
+                                    _txtRemarks.Text +=
+                                        Environment.NewLine +
+                                        Environment.NewLine +
+                                        "You are " +
+                                        realDistance.ToString("0") +
+                                        " km from the closest exclusion zone, " +
+                                        Utils.Rules[0].LocationName +
+                                        ". Coronalert will continue to monitor your position, and tell you when you are within " +
+                                        Utils.Rules[0].WarnK.ToString("0.###") +
+                                        " km of its " +
+                                        Utils.Rules[0].RadiusK.ToString("0.###") +
+                                        " km radius.";
+                                }
+                            }
                         }
 
                         ShowState();
@@ -503,9 +654,21 @@ namespace CRadius.Droid
                 {
                     StartActivity(new Intent(Application.Context, typeof(SettingsActivity)));
                 }
-                else if (item.ItemId == Resource.Id.menu_tag)
+                else if (item.ItemId == Resource.Id.menu_snap)
                 {
-                    StartActivity(new Intent(Application.Context, typeof(TagActivity)));
+                    ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+                    Utils.DoSnap(prefs);
+                    _txtStartAddress = Utils.GetAddress(_instance);
+                    if (Utils.Distance == 0)
+                    {
+                        _txtRemarks.Text = string.Format("You are at your origin, ");
+                    }
+                    else
+                    {
+                        _txtRemarks.Text = "You are " + Utils.Distance.ToString("0.###") + " km from your origin, ";
+                    }
+                    _txtRemarks.Text += _txtStartAddress;
+                    Toast.MakeText(this, "Saved", ToastLength.Short).Show();
                 }
             }
             catch (Exception ex)

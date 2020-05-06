@@ -6,6 +6,7 @@ namespace CRadius.Data
 {
     public static class Lists
     {
+        public static List<Item> locationType;
         public static List<Item> direction;
         public static List<Item> sector;
         public static List<Item> scale;
@@ -37,6 +38,12 @@ namespace CRadius.Data
             AnnouncementType = 11,
             Sector = 12,
             Direction = 13,
+            LocationType = 14,
+        }
+
+        public static List<Item> LocationType
+        {
+            get { return locationType; }
         }
 
         public static List<Item> Direction
@@ -116,6 +123,12 @@ namespace CRadius.Data
 
         public static void Initialise()
         {
+            locationType = new List<Item>();
+
+            locationType.Add(new Item("0", String.Empty, String.Empty, false));
+            locationType.Add(new Item("1", "Radius", String.Empty, false));
+            locationType.Add(new Item("2", "Polygon", String.Empty, false));
+
             direction = new List<Item>();
 
             direction.Add(new Item("0", String.Empty, String.Empty, false));
@@ -259,6 +272,11 @@ namespace CRadius.Data
 
                 switch (stringType)
                 {
+                    case (int)StringType.LocationType:
+                        {
+                            outString = LocationType.FindLast(delegate (Item i) { return i.Value == inString; }).Text;
+                            break;
+                        }
                     case (int)StringType.Direction:
                         {
                             outString = Direction.FindLast(delegate (Item i) { return i.Value == inString; }).Text;

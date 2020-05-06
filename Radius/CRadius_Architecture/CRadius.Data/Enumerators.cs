@@ -2,6 +2,13 @@ public class Enumerators
 {
     #region Enumerators
 
+    public enum LocationType
+    {
+        None = 0,
+        Radius = 1,
+        Polygon = 2,
+    }
+
     public enum Scale
     {
         None = 0,

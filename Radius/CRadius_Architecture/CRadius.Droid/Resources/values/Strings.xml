@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <string name="app_name">Radius</string>
+  <string name="app_name">Coronalert</string>
   <string name="radius_prompt">Choose a Radius [km]:</string>
   <string name="wait_prompt">Searching for satellites...</string>
+  <string name="permission_location_rationale">Allow Radius to access your locaiton?</string>
+  <string name="ok">Rhubarb</string>
 </resources>

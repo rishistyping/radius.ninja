@@ -2,8 +2,8 @@
 	.section	.rodata..L.str.1,"aMS",@progbits,1
 	.type	.L.str.1, @object
 .L.str.1:
-	.asciz	"CRadius.Droid.CRadius.Droid"
-	.size	.L.str.1, 28
+	.asciz	"Coronalert.Droid"
+	.size	.L.str.1, 17
 	.section	.data.application_config,"aw",@progbits
 	.type	application_config, @object
 	.p2align	3
@@ -17,19 +17,26 @@ application_config:
 	.byte	1
 	/* is_a_bundled_app */
 	.byte	0
+	/* broken_exception_transitions */
+	.byte	0
+	/* bound_exception_type */
+	.byte	1
+	/* package_naming_policy */
+	.zero	2
+	.long	3
 	/* environment_variable_count */
-	.long	10
+	.long	12
 	/* system_property_count */
 	.long	0
 	.zero	4
 	/* android_package_name */
 	.quad	.L.str.1
-	.size	application_config, 24
+	.size	application_config, 32
 	.section	.rodata..L.str.2,"aMS",@progbits,1
 	.type	.L.str.2, @object
 .L.str.2:
-	.asciz	"0"
-	.size	.L.str.2, 2
+	.asciz	"none"
+	.size	.L.str.2, 5
 	.section	.data.mono_aot_mode_name,"aw",@progbits
 	.global	mono_aot_mode_name
 mono_aot_mode_name:
@@ -62,7 +69,7 @@ mono_aot_mode_name:
 	.section	.rodata..L.str.8,"aMS",@progbits,1
 	.type	.L.str.8, @object
 .L.str.8:
-	.asciz	"3f2222fc-3979-4598-904a-5d2e283f7606"
+	.asciz	"d0790387-4bf3-4146-b390-913daa8683d5"
 	.size	.L.str.8, 37
 	.section	.rodata..L.str.9,"aMS",@progbits,1
 	.type	.L.str.9, @object
@@ -84,6 +91,16 @@ mono_aot_mode_name:
 .L.str.12:
 	.asciz	"btls"
 	.size	.L.str.12, 5
+	.section	.rodata..L.str.13,"aMS",@progbits,1
+	.type	.L.str.13, @object
+.L.str.13:
+	.asciz	"__XA_PACKAGE_NAMING_POLICY__"
+	.size	.L.str.13, 29
+	.section	.rodata..L.str.14,"aMS",@progbits,1
+	.type	.L.str.14, @object
+.L.str.14:
+	.asciz	"LowercaseCrc64"
+	.size	.L.str.14, 15
 	.section	.data.app_environment_variables,"aw",@progbits
 	.type	app_environment_variables, @object
 	.p2align	3
@@ -99,7 +116,9 @@ app_environment_variables:
 	.quad	.L.str.10
 	.quad	.L.str.11
 	.quad	.L.str.12
-	.size	app_environment_variables, 80
+	.quad	.L.str.13
+	.quad	.L.str.14
+	.size	app_environment_variables, 96
 	.section	.data.app_system_properties,"aw",@progbits
 	.type	app_system_properties, @object
 	.p2align	3

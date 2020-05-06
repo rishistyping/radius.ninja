@@ -50,6 +50,10 @@
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Java.Interop" />
+    <Reference Include="Plugin.CurrentActivity, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Plugin.CurrentActivity.2.1.0.2\lib\monoandroid44\Plugin.CurrentActivity.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.EnterpriseServices" />
@@ -66,6 +70,9 @@
     <Reference Include="Xamarin.Android.Arch.Lifecycle.Runtime, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Android.Arch.Lifecycle.Runtime.1.1.1.3\lib\monoandroid81\Xamarin.Android.Arch.Lifecycle.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Android.Support.Animated.Vector.Drawable, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.Support.Animated.Vector.Drawable.28.0.0.3\lib\monoandroid81\Xamarin.Android.Support.Animated.Vector.Drawable.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.Android.Support.Annotations, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Android.Support.Annotations.28.0.0.3\lib\monoandroid81\Xamarin.Android.Support.Annotations.dll</HintPath>
     </Reference>
@@ -78,11 +85,26 @@
     <Reference Include="Xamarin.Android.Support.Core.Utils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Android.Support.Core.Utils.28.0.0.3\lib\monoandroid81\Xamarin.Android.Support.Core.Utils.dll</HintPath>
     </Reference>
+    <Reference Include="Xamarin.Android.Support.Design, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.Support.Design.28.0.0.3\lib\monoandroid81\Xamarin.Android.Support.Design.dll</HintPath>
+    </Reference>
     <Reference Include="Xamarin.Android.Support.Fragment, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Android.Support.Fragment.28.0.0.3\lib\monoandroid81\Xamarin.Android.Support.Fragment.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.Android.Support.Media.Compat, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Android.Support.Media.Compat.28.0.0.3\lib\monoandroid81\Xamarin.Android.Support.Media.Compat.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.Transition, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.Support.Transition.28.0.0.3\lib\monoandroid81\Xamarin.Android.Support.Transition.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v7.AppCompat, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.Support.v7.AppCompat.28.0.0.3\lib\monoandroid81\Xamarin.Android.Support.v7.AppCompat.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.v7.RecyclerView, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.Support.v7.RecyclerView.28.0.0.3\lib\monoandroid81\Xamarin.Android.Support.v7.RecyclerView.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Android.Support.Vector.Drawable, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Android.Support.Vector.Drawable.28.0.0.3\lib\monoandroid81\Xamarin.Android.Support.Vector.Drawable.dll</HintPath>
     </Reference>
     <Reference Include="Xamarin.GooglePlayServices.Base, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.GooglePlayServices.Base.60.1142.1\lib\MonoAndroid80\Xamarin.GooglePlayServices.Base.dll</HintPath>
@@ -99,21 +121,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\ErosActivity.cs" />
-    <Compile Include="Activities\LatLng.cs" />
+    <Compile Include="Utils\LatLng.cs" />
     <Compile Include="Activities\MainActivity.cs" />
     <Compile Include="Activities\SplashActivity.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Activities\SettingsActivity.cs" />
-    <Compile Include="Activities\TagActivity.cs" />
+    <Compile Include="Utils\Polygon.cs" />
     <Compile Include="Utils\Utils.cs" />
     <Compile Include="Utils\BytesConverter.cs" />
-    <Compile Include="Utils\TagParser.cs" />
-    <Compile Include="Web References\blue.mineral.demo\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.map</DependentUpon>
-    </Compile>
     <Compile Include="Web References\ninja.radius\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -132,23 +148,6 @@
     </AndroidResource>
     <AndroidResource Include="Resources\layout\Tag.axml" />
     <AndroidResource Include="Resources\layout\toolbar.axml" />
-    <None Include="Web References\blue.mineral.demo\Radius.wsdl" />
-    <None Include="Web References\blue.mineral.demo\radius.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\blue.mineral.demo\radius0.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\blue.mineral.demo\radius1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Web References\blue.mineral.demo\RadiusPayload.datasource">
-      <DependentUpon>Reference.map</DependentUpon>
-    </None>
-    <None Include="Web References\blue.mineral.demo\Reference.map">
-      <Generator>MSDiscoCodeGenerator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
     <None Include="Web References\ninja.radius\Payload.datasource">
       <DependentUpon>Reference.map</DependentUpon>
     </None>
@@ -166,11 +165,6 @@
       <Generator>MSDiscoCodeGenerator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\Main.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\font\" />
@@ -205,9 +199,6 @@
     <AndroidResource Include="Resources\drawable\Ping.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\Satellite.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\values\colors.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -226,23 +217,10 @@
     <WebReferences Include="Web References\" />
   </ItemGroup>
   <ItemGroup>
-    <WebReferenceUrl Include="http://demo.mineral.blue/services/radius.svc">
-      <UrlBehavior>Dynamic</UrlBehavior>
-      <RelPath>Web References\blue.mineral.demo\</RelPath>
-      <UpdateFromURL>http://demo.mineral.blue/services/radius.svc</UpdateFromURL>
-      <ServiceLocationURL>
-      </ServiceLocationURL>
-      <CachedDynamicPropName>
-      </CachedDynamicPropName>
-      <CachedAppSettingsObjectName>
-      </CachedAppSettingsObjectName>
-      <CachedSettingsPropName>
-      </CachedSettingsPropName>
-    </WebReferenceUrl>
-    <WebReferenceUrl Include="http://radius.ninja/services/radius.svc">
+    <WebReferenceUrl Include="http://services.radius.ninja/services/radius.svc">
       <UrlBehavior>Dynamic</UrlBehavior>
       <RelPath>Web References\ninja.radius\</RelPath>
-      <UpdateFromURL>http://radius.ninja/services/radius.svc</UpdateFromURL>
+      <UpdateFromURL>http://services.radius.ninja/services/radius.svc</UpdateFromURL>
       <ServiceLocationURL>
       </ServiceLocationURL>
       <CachedDynamicPropName>
@@ -263,13 +241,13 @@
     <AndroidResource Include="Resources\drawable\Red.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Web References\blue.mineral.demo\radius.disco" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Web References\ninja.radius\Radius.disco" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\layout\Main.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\layout\Settings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
@@ -291,6 +269,12 @@
     <Error Condition="!Exists('..\packages\Xamarin.Android.Support.Core.Utils.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Core.Utils.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Support.Core.Utils.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Core.Utils.targets'))" />
     <Error Condition="!Exists('..\packages\Xamarin.Android.Support.Fragment.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Fragment.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Support.Fragment.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Fragment.targets'))" />
     <Error Condition="!Exists('..\packages\Xamarin.Android.Support.Media.Compat.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Media.Compat.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Support.Media.Compat.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Media.Compat.targets'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Android.Support.Transition.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Transition.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Support.Transition.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Transition.targets'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Android.Support.v7.RecyclerView.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.v7.RecyclerView.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Support.v7.RecyclerView.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.v7.RecyclerView.targets'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Android.Support.Vector.Drawable.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Vector.Drawable.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Support.Vector.Drawable.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Vector.Drawable.targets'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Android.Support.Animated.Vector.Drawable.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Animated.Vector.Drawable.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Support.Animated.Vector.Drawable.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Animated.Vector.Drawable.targets'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Android.Support.v7.AppCompat.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.v7.AppCompat.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Support.v7.AppCompat.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.v7.AppCompat.targets'))" />
+    <Error Condition="!Exists('..\packages\Xamarin.Android.Support.Design.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Design.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Android.Support.Design.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Design.targets'))" />
   </Target>
   <Import Project="..\packages\Xamarin.Build.Download.0.4.9\build\Xamarin.Build.Download.targets" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.9\build\Xamarin.Build.Download.targets')" />
   <Import Project="..\packages\Xamarin.GooglePlayServices.Basement.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Basement.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Basement.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Basement.targets')" />
@@ -306,6 +290,12 @@
   <Import Project="..\packages\Xamarin.Android.Support.Core.Utils.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Core.Utils.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Core.Utils.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Core.Utils.targets')" />
   <Import Project="..\packages\Xamarin.Android.Support.Fragment.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Fragment.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Fragment.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Fragment.targets')" />
   <Import Project="..\packages\Xamarin.Android.Support.Media.Compat.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Media.Compat.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Media.Compat.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Media.Compat.targets')" />
+  <Import Project="..\packages\Xamarin.Android.Support.Transition.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Transition.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Transition.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Transition.targets')" />
+  <Import Project="..\packages\Xamarin.Android.Support.v7.RecyclerView.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.v7.RecyclerView.targets" Condition="Exists('..\packages\Xamarin.Android.Support.v7.RecyclerView.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.v7.RecyclerView.targets')" />
+  <Import Project="..\packages\Xamarin.Android.Support.Vector.Drawable.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Vector.Drawable.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Vector.Drawable.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Vector.Drawable.targets')" />
+  <Import Project="..\packages\Xamarin.Android.Support.Animated.Vector.Drawable.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Animated.Vector.Drawable.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Animated.Vector.Drawable.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Animated.Vector.Drawable.targets')" />
+  <Import Project="..\packages\Xamarin.Android.Support.v7.AppCompat.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.v7.AppCompat.targets" Condition="Exists('..\packages\Xamarin.Android.Support.v7.AppCompat.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.v7.AppCompat.targets')" />
+  <Import Project="..\packages\Xamarin.Android.Support.Design.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Design.targets" Condition="Exists('..\packages\Xamarin.Android.Support.Design.28.0.0.3\build\monoandroid81\Xamarin.Android.Support.Design.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
 		Other similar extension points exist, see Microsoft.Common.targets.
 		<Target Name="BeforeBuild">

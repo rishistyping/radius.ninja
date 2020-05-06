@@ -1,9 +1,12 @@
-﻿using Android.Content;
+﻿using Android.App;
+using Android.Content;
 using Android.Locations;
 using CRadius.Droid.ninja.radius;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace CRadius.Droid
 {
@@ -16,21 +19,19 @@ namespace CRadius.Droid
         public static Location PreviousLocation;
         public static Location StartLocation;
         public static bool Registered = false;
-        public static bool Started;
         public static double Distance;
         public static string Username;
-        public static string Radius = "0";
         public static bool SMSSent;
-        public static bool EmailSent;
+        public static bool BarpPlayed;
+        public static bool BarpLooped;
         public static string Mobile;
-        public static string Email;
         public static string Name;
-        public static string TagId;
         public static Exception Eros;
+        public static string StartAddress;
 
         public static List<Rule> Rules;
 
-        public static readonly string MasterIdentity = "Radius";
+        public static readonly string MasterIdentity = "Coronalert";
 
         public static string Password { get; set; }
 
@@ -40,9 +41,62 @@ namespace CRadius.Droid
         {
         }
 
+        public static void DoSnap(ISharedPreferences prefs)
+        {
+            Utils.StartLocation = Utils.Location;
+            Utils.Distance = 0;
+
+            ISharedPreferencesEditor editor = prefs.Edit();
+
+            editor.PutFloat("StartLatitude", (float)Utils.StartLocation.Latitude);
+            editor.PutFloat("StartLongitude", (float)Utils.StartLocation.Longitude);
+            editor.PutString("TagId", string.Empty);
+            editor.Apply();
+
+            Utils.BarpPlayed = false;
+            Utils.BarpLooped = false;
+            Utils.SMSSent = false;
+        }
+
+        public static string GetAddress(Activity instance)
+        {
+            string address = string.Empty;
+
+            try
+            {
+                Geocoder geocoder = new Geocoder(instance);
+
+                IList<Address> addressList = geocoder.GetFromLocation(StartLocation.Latitude, StartLocation.Longitude, 1);
+
+                Address addressCurrent = addressList.FirstOrDefault();
+
+                if (addressCurrent != null)
+                {
+                    StringBuilder deviceAddress = new StringBuilder();
+
+                    for (int i = 0; i <= addressCurrent.MaxAddressLineIndex; i++)
+                    {
+                        if (addressCurrent.GetAddressLine(i).Length > 0)
+                        {
+                            deviceAddress.Append(addressCurrent.GetAddressLine(i)).AppendLine(",");
+                        }
+                    }
+
+                    address = deviceAddress.ToString().Replace(System.Environment.NewLine, string.Empty).TrimEnd(',') + ".";
+                }
+            }
+            catch
+            {
+                address = "Can't get address. Are you online?";
+            }
+
+            StartAddress = address;
+            return address;
+        }
+
         public static string DbPath
         {
-            get { return Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "radius.db3"); }
+            get { return Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "coronalert.db3"); }
         }
 
         public static double DblParse(string instring)
@@ -90,6 +144,13 @@ namespace CRadius.Droid
             decimal d = (decimal)(R * h2);
 
             return d;
+        }
+
+        public enum LocationType
+        {
+            None = 0,
+            Radius = 1,
+            Polygon = 2,
         }
 
         public enum Direction

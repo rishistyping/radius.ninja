@@ -17,6 +17,8 @@ namespace CRadius.Data
 		private string authorComments;
 		private string approverComments;
 		private string comments;
+		private int locationType;
+		private string polygon;
 		private string internalComment;
 		private string createdBy;
 		private DateTime createdOn;
@@ -37,7 +39,7 @@ namespace CRadius.Data
 		/// <summary>
 		/// Initializes a new instance of the Location class.
 		/// </summary>
-		public Location(string code, string name, decimal mapLatitude, decimal mapLongitude, bool isApproved, bool isActive, string authorComments, string approverComments, string comments, string internalComment, string createdBy, DateTime createdOn, string auditActionBy, DateTime auditActionOn)
+		public Location(string code, string name, decimal mapLatitude, decimal mapLongitude, bool isApproved, bool isActive, string authorComments, string approverComments, string comments, int locationType, string polygon, string internalComment, string createdBy, DateTime createdOn, string auditActionBy, DateTime auditActionOn)
 		{
 			this.code = code;
 			this.name = name;
@@ -48,6 +50,8 @@ namespace CRadius.Data
 			this.authorComments = authorComments;
 			this.approverComments = approverComments;
 			this.comments = comments;
+			this.locationType = locationType;
+			this.polygon = polygon;
 			this.internalComment = internalComment;
 			this.createdBy = createdBy;
 			this.createdOn = createdOn;
@@ -58,7 +62,7 @@ namespace CRadius.Data
 		/// <summary>
 		/// Initializes a new instance of the Location class.
 		/// </summary>
-		public Location(int iD, string code, string name, decimal mapLatitude, decimal mapLongitude, bool isApproved, bool isActive, string authorComments, string approverComments, string comments, string internalComment, string createdBy, DateTime createdOn, string auditActionBy, DateTime auditActionOn)
+		public Location(int iD, string code, string name, decimal mapLatitude, decimal mapLongitude, bool isApproved, bool isActive, string authorComments, string approverComments, string comments, int locationType, string polygon, string internalComment, string createdBy, DateTime createdOn, string auditActionBy, DateTime auditActionOn)
 		{
 			this.iD = iD;
 			this.code = code;
@@ -70,6 +74,8 @@ namespace CRadius.Data
 			this.authorComments = authorComments;
 			this.approverComments = approverComments;
 			this.comments = comments;
+			this.locationType = locationType;
+			this.polygon = polygon;
 			this.internalComment = internalComment;
 			this.createdBy = createdBy;
 			this.createdOn = createdOn;
@@ -168,6 +174,24 @@ namespace CRadius.Data
 		{
 			get { return comments; }
 			set { comments = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the LocationType value.
+		/// </summary>
+		public virtual int LocationType
+		{
+			get { return locationType; }
+			set { locationType = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the Polygon value.
+		/// </summary>
+		public virtual string Polygon
+		{
+			get { return polygon; }
+			set { polygon = value; }
 		}
 
 		/// <summary>

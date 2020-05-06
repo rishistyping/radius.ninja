@@ -47,6 +47,8 @@ namespace CRadius.Data.DAL
 				new SqlParameter("@AuthorComments", location.AuthorComments),
 				new SqlParameter("@ApproverComments", location.ApproverComments),
 				new SqlParameter("@Comments", location.Comments),
+				new SqlParameter("@LocationType", location.LocationType),
+				new SqlParameter("@Polygon", location.Polygon),
 				new SqlParameter("@InternalComment", location.InternalComment),
 				new SqlParameter("@CreatedBy", location.CreatedBy),
 				new SqlParameter("@CreatedOn", location.CreatedOn),
@@ -76,6 +78,8 @@ namespace CRadius.Data.DAL
 				new SqlParameter("@AuthorComments", location.AuthorComments),
 				new SqlParameter("@ApproverComments", location.ApproverComments),
 				new SqlParameter("@Comments", location.Comments),
+				new SqlParameter("@LocationType", location.LocationType),
+				new SqlParameter("@Polygon", location.Polygon),
 				new SqlParameter("@InternalComment", location.InternalComment),
 				new SqlParameter("@CreatedBy", location.CreatedBy),
 				new SqlParameter("@CreatedOn", location.CreatedOn),
@@ -157,6 +161,8 @@ namespace CRadius.Data.DAL
 			location.AuthorComments = SqlClientUtility.GetString(dataReader, "AuthorComments", String.Empty);
 			location.ApproverComments = SqlClientUtility.GetString(dataReader, "ApproverComments", String.Empty);
 			location.Comments = SqlClientUtility.GetString(dataReader, "Comments", String.Empty);
+			location.LocationType = SqlClientUtility.GetInt32(dataReader, "LocationType", 0);
+			location.Polygon = SqlClientUtility.GetString(dataReader, "Polygon", String.Empty);
 			location.InternalComment = SqlClientUtility.GetString(dataReader, "InternalComment", String.Empty);
 			location.CreatedBy = SqlClientUtility.GetString(dataReader, "CreatedBy", String.Empty);
 			location.CreatedOn = SqlClientUtility.GetDateTime(dataReader, "CreatedOn", DateTime.Now);

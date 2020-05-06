@@ -29,46 +29,18 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:src="@drawable/Gray" />
+            <Button
+                android:text="Mute"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/buttonMute" />
             <TextView
+                android:layout_margin="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/txtRemarks"
                 android:textSize="20dp"
                 android:gravity="center_horizontal" />
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/layout"
-                android:gravity="center_horizontal">
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal">
-                    <Button
-                        android:text="Pause"
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/buttonStart" />
-                    <Button
-                        android:text="Snap"
-                        android:layout_width="150dp"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/buttonSnaptoHere" />
-                </LinearLayout>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:id="@+id/txtTag" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/txtViewLog"
-                    android:gravity="center_horizontal" />
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

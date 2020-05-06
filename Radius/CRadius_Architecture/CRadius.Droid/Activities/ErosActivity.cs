@@ -2,7 +2,7 @@ using Android.App;
 using Android.OS;
 using Android.Util;
 using Android.Widget;
-using CRadius.Droid.blue.mineral.demo;
+using CRadius.Droid.ninja.radius;
 using System;
 using System.Threading.Tasks;
 

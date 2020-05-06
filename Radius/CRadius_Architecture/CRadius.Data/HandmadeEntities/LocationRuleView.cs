@@ -14,6 +14,8 @@ namespace CRadius.Data
         int direction;
         string message;
         string locationName;
+        private int locationType;
+        private string polygon;
 
         #endregion
 
@@ -29,6 +31,17 @@ namespace CRadius.Data
         #endregion
 
         #region Properties
+        public virtual int LocationType
+        {
+            get { return locationType; }
+            set { locationType = value; }
+        }
+
+        public virtual string Polygon
+        {
+            get { return polygon; }
+            set { polygon = value; }
+        }
 
         public virtual string LocationName
         {

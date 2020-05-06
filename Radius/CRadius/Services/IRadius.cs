@@ -5,10 +5,17 @@ using System.ServiceModel;
 namespace CRadius
 {
     [ServiceContract]
+
     public interface IRadius
     {
         [OperationContract]
         Payload Handshake();
+
+        [OperationContract]
+        void DoError(
+            string errorMessage,
+            string innerException,
+            string stackTrace);
     }
 
     [DataContract]
@@ -38,7 +45,9 @@ namespace CRadius
             decimal warnK,
             int direction,
             string message,
-            string locationName)
+            string locationName,
+            int locationType,
+            string polygon)
         {
             ID = iD;
             MapLatitude = mapLatitude;
@@ -48,10 +57,18 @@ namespace CRadius
             Direction = direction;
             Message = message;
             LocationName = locationName;
+            LocationType = locationType;
+            Polygon = polygon;
             Distance = 0;
             LocationState = 0;
             Dismissed = false;
         }
+
+        [DataMember]
+        public string Polygon { get; set; }
+
+        [DataMember]
+        public int LocationType { get; set; }
 
         [DataMember]
         public bool Dismissed { get; set; }

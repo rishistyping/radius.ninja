@@ -31,11 +31,13 @@ namespace CRadius.Droid.ninja.radius {
         
         private System.Threading.SendOrPostCallback HandshakeOperationCompleted;
         
+        private System.Threading.SendOrPostCallback DoErrorOperationCompleted;
+        
         private bool useDefaultCredentialsSetExplicitly;
         
         /// <remarks/>
         public Radius() {
-            this.Url = "http://radius.ninja/services/Radius.svc";
+            this.Url = "http://services.radius.ninja/services/Radius.svc";
             if ((this.IsLocalFileSystemWebService(this.Url) == true)) {
                 this.UseDefaultCredentials = true;
                 this.useDefaultCredentialsSetExplicitly = false;
@@ -73,6 +75,9 @@ namespace CRadius.Droid.ninja.radius {
         public event HandshakeCompletedEventHandler HandshakeCompleted;
         
         /// <remarks/>
+        public event DoErrorCompletedEventHandler DoErrorCompleted;
+        
+        /// <remarks/>
         [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/IRadius/Handshake", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
         [return: System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
         public Payload Handshake() {
@@ -97,6 +102,38 @@ namespace CRadius.Droid.ninja.radius {
             if ((this.HandshakeCompleted != null)) {
                 System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
                 this.HandshakeCompleted(this, new HandshakeCompletedEventArgs(invokeArgs.Results, invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
+            }
+        }
+        
+        /// <remarks/>
+        [System.Web.Services.Protocols.SoapDocumentMethodAttribute("http://tempuri.org/IRadius/DoError", RequestNamespace="http://tempuri.org/", ResponseNamespace="http://tempuri.org/", Use=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)]
+        public void DoError([System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] string errorMessage, [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] string innerException, [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)] string stackTrace) {
+            this.Invoke("DoError", new object[] {
+                        errorMessage,
+                        innerException,
+                        stackTrace});
+        }
+        
+        /// <remarks/>
+        public void DoErrorAsync(string errorMessage, string innerException, string stackTrace) {
+            this.DoErrorAsync(errorMessage, innerException, stackTrace, null);
+        }
+        
+        /// <remarks/>
+        public void DoErrorAsync(string errorMessage, string innerException, string stackTrace, object userState) {
+            if ((this.DoErrorOperationCompleted == null)) {
+                this.DoErrorOperationCompleted = new System.Threading.SendOrPostCallback(this.OnDoErrorOperationCompleted);
+            }
+            this.InvokeAsync("DoError", new object[] {
+                        errorMessage,
+                        innerException,
+                        stackTrace}, this.DoErrorOperationCompleted, userState);
+        }
+        
+        private void OnDoErrorOperationCompleted(object arg) {
+            if ((this.DoErrorCompleted != null)) {
+                System.Web.Services.Protocols.InvokeCompletedEventArgs invokeArgs = ((System.Web.Services.Protocols.InvokeCompletedEventArgs)(arg));
+                this.DoErrorCompleted(this, new System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState));
             }
         }
         
@@ -234,6 +271,10 @@ namespace CRadius.Droid.ninja.radius {
         
         private bool locationStateFieldSpecified;
         
+        private int locationTypeField;
+        
+        private bool locationTypeFieldSpecified;
+        
         private decimal mapLatitudeField;
         
         private bool mapLatitudeFieldSpecified;
@@ -243,6 +284,8 @@ namespace CRadius.Droid.ninja.radius {
         private bool mapLongitudeFieldSpecified;
         
         private string messageField;
+        
+        private string polygonField;
         
         private decimal radiusKField;
         
@@ -369,6 +412,27 @@ namespace CRadius.Droid.ninja.radius {
         }
         
         /// <remarks/>
+        public int LocationType {
+            get {
+                return this.locationTypeField;
+            }
+            set {
+                this.locationTypeField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlIgnoreAttribute()]
+        public bool LocationTypeSpecified {
+            get {
+                return this.locationTypeFieldSpecified;
+            }
+            set {
+                this.locationTypeFieldSpecified = value;
+            }
+        }
+        
+        /// <remarks/>
         public decimal MapLatitude {
             get {
                 return this.mapLatitudeField;
@@ -418,6 +482,17 @@ namespace CRadius.Droid.ninja.radius {
             }
             set {
                 this.messageField = value;
+            }
+        }
+        
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute(IsNullable=true)]
+        public string Polygon {
+            get {
+                return this.polygonField;
+            }
+            set {
+                this.polygonField = value;
             }
         }
         
@@ -489,6 +564,10 @@ namespace CRadius.Droid.ninja.radius {
             }
         }
     }
+    
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.3761.0")]
+    public delegate void DoErrorCompletedEventHandler(object sender, System.ComponentModel.AsyncCompletedEventArgs e);
 }
 
 #pragma warning restore 1591

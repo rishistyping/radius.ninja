@@ -6,7 +6,7 @@
     android:minHeight="?android:attr/actionBarSize"
     android:background="?android:attr/colorPrimary"
     android:theme="@android:style/ThemeOverlay.Material.Dark.ActionBar"
-    android:popupTheme="@android:style/ThemeOverlay.Material">
+    android:popupTheme="@android:style/ThemeOverlay.Material.Light">
     <ImageView
         android:id="@+id/imageViewHeading"
         android:layout_margin="10dp"

@@ -31,5 +31,6 @@ string;obj\Release\81\res\values\strings.xml
 style;obj\Release\81\res\values\styles.xml
 TextView;obj\Release\81\res\layout\eros.xml
 TextView;obj\Release\81\res\layout\main.xml
+TextView;obj\Release\81\res\layout\settings.xml
 TextView;obj\Release\81\res\layout\tag.xml
 Toolbar;obj\Release\81\res\layout\toolbar.xml

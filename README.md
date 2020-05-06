@@ -1,1 +1,1 @@
-# radius.ninja
+# coronalert
